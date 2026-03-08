@@ -1,147 +1,80 @@
 # 🏎️ Formula 1 Data Lakehouse Pipeline using Azure & Databricks
 
-This project demonstrates how to build an **end-to-end Formula 1 data engineering pipeline** using modern cloud data engineering tools such as **Azure Data Factory, Azure Databricks, PySpark, Azure Data Lake Storage Gen2, and Delta Lake**.
+This project demonstrates how to build an **end-to-end data engineering pipeline** using **Azure Data Factory, Azure Data Lake Storage Gen2, Azure Databricks, and PySpark**.
 
-The pipeline follows the **Medallion Architecture** to organize data into **Bronze, Silver, and Gold layers**, enabling scalable data processing, improved data quality, and analytics-ready datasets.
-
-The pipeline supports ingestion of multiple **Formula 1 datasets in CSV and JSON formats**, processes them using distributed computing, and transforms them into structured datasets that can be used for **analytics, reporting, and performance analysis**.
+The pipeline follows the **Medallion Architecture** where data is organized into **Bronze, Silver, and Gold layers**. This approach improves data quality, enables scalable processing, and produces analytics-ready datasets.
 
 ---
 
-# 🧾 What’s in the Project?
+## 🧾 Dataset
 
-This project processes multiple **Formula 1 racing datasets** which include historical race and driver information.
+The project processes multiple **Formula 1 datasets** that contain historical race and driver information.
 
-Some of the key datasets used include:
+Datasets used in this project include:
 
-- **circuits.csv** – Information about Formula 1 race circuits  
-- **drivers.json** – Driver details including nationality and driver code  
+- **circuits.csv** – Information about race circuits  
+- **drivers.json** – Driver details and nationality  
 - **constructors.json** – Constructor/team information  
-- **races.csv** – Race event details such as location and season  
-- **results.json** – Race results including finishing positions  
+- **races.csv** – Race event details  
+- **results.json** – Race results and finishing positions  
 - **pit_stops.json** – Pit stop timing information  
-- **lap_times.json** – Lap-by-lap timing information  
+- **lap_times.json** – Lap-by-lap timing data  
 - **qualifying.json** – Qualifying session results  
 
-These datasets are ingested and processed through the pipeline to generate **analytics-ready datasets**.
+---
+
+## 🏗️ Pipeline Workflow
+
+### 1️⃣ Data Ingestion (Bronze Layer)
+
+Raw Formula 1 datasets are ingested into **Azure Data Lake Storage Gen2** using **Azure Data Factory pipelines**.
+
+The **Bronze layer** stores the raw data exactly as received from the source system without applying major transformations.
 
 ---
 
-# 🏗️ Step-by-Step Workflow
+### 2️⃣ Silver Layer (Cleaned Data)
 
-## 1️⃣ Data Ingestion
+Data from the Bronze layer is processed using **Azure Databricks notebooks with PySpark**.
 
-The raw Formula 1 datasets are stored in **Azure Data Lake Storage Gen2**.
-
-An **Azure Data Factory pipeline** is used to orchestrate the ingestion process. The pipeline reads the raw datasets and organizes them in the **Bronze layer of the data lake**.
-
-This ingestion pipeline supports loading multiple datasets and ensures structured storage within the data lake.
-
----
-
-## 2️⃣ Bronze Layer – Raw Zone
-
-The **Bronze layer** stores raw data exactly as received from the source.
-
-### Key characteristics
-
-- Raw CSV and JSON files are ingested  
-- Minimal transformation is applied  
-- Data is stored in Azure Data Lake Storage  
-- Maintains a historical copy of source data  
-
-The data is stored in **Parquet format** to improve storage efficiency and query performance.
-
----
-
-## 3️⃣ Unity Catalog Setup
-
-**Unity Catalog** is configured in **Azure Databricks** to provide centralized data governance.
-
-The following schemas are created to organize the data layers:
-
-- **Bronze schema** – Stores raw ingested datasets  
-- **Silver schema** – Stores cleaned and processed datasets  
-- **Gold schema** – Stores curated analytics datasets  
-
-Unity Catalog ensures proper **access control, metadata management, and governance** for the data lakehouse.
-
----
-
-## 4️⃣ Silver Layer – Cleaned Zone
-
-The **Silver layer** contains cleaned and standardized data derived from the Bronze layer.
-
-Databricks notebooks are used to process the raw data using **PySpark**.
-
-### Key transformations performed
+Transformations performed include:
 
 - Schema enforcement  
-- Data type conversions  
-- Column renaming and standardization  
-- Handling missing values  
+- Data cleaning  
+- Data type conversion  
 - Removing duplicate records  
 
-The processed datasets are stored in the **Silver layer as Delta tables**, enabling reliable and efficient data storage.
+The cleaned datasets are stored in the **Silver layer**.
 
 ---
 
-## 5️⃣ Gold Layer – Curated Zone
+### 3️⃣ Gold Layer (Curated Data)
 
-The **Gold layer** contains business-level datasets designed for analytics and reporting.
+The **Gold layer** contains analytics-ready datasets created from the Silver layer.
 
-In this stage, data from the Silver layer is transformed into analytical models such as:
+Examples include:
 
 - Driver standings  
 - Constructor standings  
 - Race performance statistics  
-- Season-wise driver performance  
 
-PySpark transformations and aggregations are used to generate these datasets.
-
-The final output is stored as **Delta tables in the Gold layer**, optimized for analytics and BI tools.
+These datasets are optimized for **analytics and reporting**.
 
 ---
 
-## 6️⃣ Job Orchestration
-
-A **Databricks job workflow** is created to automate the entire data pipeline.
-
-The job runs all the notebooks sequentially:
-
-1. Bronze ingestion notebooks  
-2. Silver transformation notebooks  
-3. Gold aggregation notebooks  
-
-This allows the entire **ETL process to be executed with a single trigger**, enabling automated data processing.
-
----
-
-# 📊 Final Output
-
-The final output of this project is a **structured Formula 1 analytics data model** built using:
-
-- **Delta Lakehouse architecture**
-- **Medallion data architecture**
-- **Scalable distributed data processing**
-
-The curated datasets can be easily connected to:
-
-- **Power BI dashboards**
-- **Databricks SQL analytics**
-- **Business reporting tools**
-
-These datasets enable insights into **driver performance, constructor standings, and race statistics across seasons**.
-
----
-
-# 🧱 Tools & Technologies
-
-The following tools and technologies are used in this project:
+## ⚙️ Tools & Technologies
 
 - **Azure Data Factory** – Pipeline orchestration and data ingestion  
-- **Azure Data Lake Storage Gen2** – Scalable data storage  
-- **Azure Databricks** – Distributed data processing platform  
-- **PySpark** – Data transformation and processing  
-- **Unity Catalog** – Data governance and access management  
-- **Delta Lake** – Reliable and scalable data lakehouse storage
+- **Azure Data Lake Storage Gen2** – Data storage  
+- **Azure Databricks** – Distributed data processing  
+- **PySpark** – Data transformation  
+- **Unity Catalog** – Data governance and schema management  
+- **Delta Lake** – Reliable lakehouse storage format  
+
+---
+
+## 📊 Final Output
+
+The final output of this project is a **structured Formula 1 analytics data model** built using **Lakehouse architecture and Medallion design pattern**.
+
+These datasets can be connected to **Power BI or Databricks SQL** for reporting and analytics.
