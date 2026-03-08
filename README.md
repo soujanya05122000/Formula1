@@ -1,4 +1,4 @@
-# 🏎️ Formula 1 Data Lakehouse Pipeline using Azure & Databricks
+# 🏎️ Formula 1 Pipeline using Azure & Databricks
 
 This project demonstrates how to build an **end-to-end data engineering pipeline** using **Azure Data Factory, Azure Data Lake Storage Gen2, Azure Databricks, and PySpark**.
 
