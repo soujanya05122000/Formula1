@@ -1,0 +1,136 @@
+{
+    "name": "CopyRawFormula1DataToADLS",
+    "properties": {
+        "activities": [
+            {
+                "name": "List_All_Files",
+                "type": "WebActivity",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "method": "GET",
+                    "url": {
+                        "value": "https://api.github.com/repos/soujanya05122000/Formula1/git/trees/main?recursive=1",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Filter_Files_Raw",
+                "type": "Filter",
+                "dependsOn": [
+                    {
+                        "activity": "List_All_Files",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('List_All_Files').output.tree",
+                        "type": "Expression"
+                    },
+                    "condition": {
+                        "value": "@and(equals(item().type,'blob'), startswith(item().path,'Raw/'))",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "ForEach1",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "Filter_Files_Raw",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('Filter_Files_Raw').output.Value",
+                        "type": "Expression"
+                    },
+                    "isSequential": true,
+                    "activities": [
+                        {
+                            "name": "Copy_File",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "BinarySource",
+                                    "storeSettings": {
+                                        "type": "HttpReadSettings",
+                                        "requestMethod": "GET"
+                                    },
+                                    "formatSettings": {
+                                        "type": "BinaryReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "BinarySink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings",
+                                        "copyBehavior": "PreserveHierarchy"
+                                    }
+                                },
+                                "enableStaging": false
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "Binary1",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "RelativeURL": {
+                                            "value": "@concat('soujanya05122000/Formula1/main/', item().path)",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "Binary2",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "FolderName": {
+                                            "value": "@concat('bronze/', join(take(split(item().path,'/'), add(length(split(item().path,'/')), -1)), '/'))",
+                                            "type": "Expression"
+                                        },
+                                        "FileName": "@last(split(item().path,'/'))"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "folder": {
+            "name": "Formula1"
+        },
+        "annotations": [],
+        "lastPublishTime": "2026-02-26T11:13:53Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

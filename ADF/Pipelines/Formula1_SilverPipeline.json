@@ -1,0 +1,321 @@
+{
+    "name": "Formula1_SilverPipeline",
+    "properties": {
+        "activities": [
+            {
+                "name": "GetDatesFolder",
+                "type": "GetMetadata",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "GetF1DatesFolder",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "p_file_date": {
+                                "value": "@pipeline().parameters.p_file_date",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "fieldList": [
+                        "exists"
+                    ],
+                    "storeSettings": {
+                        "type": "AzureBlobFSReadSettings",
+                        "recursive": true,
+                        "enablePartitionDiscovery": false
+                    },
+                    "formatSettings": {
+                        "type": "BinaryReadSettings"
+                    }
+                }
+            },
+            {
+                "name": "IfFolderExists",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "GetDatesFolder",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@activity('GetDatesFolder').output.exists",
+                        "type": "Expression"
+                    },
+                    "ifTrueActivities": [
+                        {
+                            "name": "Silver_CircuitsFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Silver/1.Silver_CircuitsFile",
+                                "baseParameters": {
+                                    "p_data_source": {
+                                        "value": "@variables('p_data_source')",
+                                        "type": "Expression"
+                                    },
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Silver_RacesFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Silver/2.Silver_RacesFile",
+                                "baseParameters": {
+                                    "p_data_source": {
+                                        "value": "@variables('p_data_source')",
+                                        "type": "Expression"
+                                    },
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Silver_ConstructorsFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Silver/3.Silver_ConstructorsFile",
+                                "baseParameters": {
+                                    "p_data_source": {
+                                        "value": "@variables('p_data_source')",
+                                        "type": "Expression"
+                                    },
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Silver_DriverFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Silver/4.Silver_DriverFile",
+                                "baseParameters": {
+                                    "p_data_source": {
+                                        "value": "@variables('p_data_source')",
+                                        "type": "Expression"
+                                    },
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Silver_ResultsFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Silver/5.Silver_ResultsFile",
+                                "baseParameters": {
+                                    "p_data_source": {
+                                        "value": "@variables('p_data_source')",
+                                        "type": "Expression"
+                                    },
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Silver_PitStopsFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Silver/6.Silver_PitStopsFile",
+                                "baseParameters": {
+                                    "p_data_source": {
+                                        "value": "@variables('p_data_source')",
+                                        "type": "Expression"
+                                    },
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Silver_QualifyingFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Silver/8.Silver_QualifyingFile",
+                                "baseParameters": {
+                                    "p_data_source": {
+                                        "value": "@variables('p_data_source')",
+                                        "type": "Expression"
+                                    },
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Silver_LapTimesFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Silver/7.Silver_LapTimesFile",
+                                "baseParameters": {
+                                    "p_data_source": {
+                                        "value": "@variables('p_data_source')",
+                                        "type": "Expression"
+                                    },
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "parameters": {
+            "p_file_date": {
+                "type": "string"
+            }
+        },
+        "variables": {
+            "p_data_source": {
+                "type": "String",
+                "defaultValue": "Ergast"
+            }
+        },
+        "folder": {
+            "name": "Formula1"
+        },
+        "annotations": [],
+        "lastPublishTime": "2026-02-26T11:13:53Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

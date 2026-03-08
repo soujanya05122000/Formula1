@@ -1,0 +1,199 @@
+{
+    "name": "Formula1_GoldPipeline",
+    "properties": {
+        "activities": [
+            {
+                "name": "GetDatesFolder",
+                "type": "GetMetadata",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "GetF1DatesFolder",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "p_file_date": {
+                                "value": "@pipeline().parameters.p_file_date",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "fieldList": [
+                        "exists"
+                    ],
+                    "storeSettings": {
+                        "type": "AzureBlobFSReadSettings",
+                        "recursive": true,
+                        "enablePartitionDiscovery": false
+                    },
+                    "formatSettings": {
+                        "type": "BinaryReadSettings"
+                    }
+                }
+            },
+            {
+                "name": "IfFolderExists",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "GetDatesFolder",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@activity('GetDatesFolder').output.exists",
+                        "type": "Expression"
+                    },
+                    "ifTrueActivities": [
+                        {
+                            "name": "Gold_RaceResultsFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Gold/1.RaceResults",
+                                "baseParameters": {
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Gold_DriverStandardsFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [
+                                {
+                                    "activity": "Gold_RaceResultsFile",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Gold/2.DriverStandards",
+                                "baseParameters": {
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Gold_ConstructorsStandingsFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [
+                                {
+                                    "activity": "Gold_RaceResultsFile",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Gold/3.ConstructorsStandings",
+                                "baseParameters": {
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Gold_RCalculatedRaceResultsFile",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/soujanyanalwad2000@gmail.com/Formula1/Gold/4.CalculatedRaceResults",
+                                "baseParameters": {
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_file_date,'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "parameters": {
+            "p_file_date": {
+                "type": "string"
+            }
+        },
+        "variables": {
+            "p_data_source": {
+                "type": "String",
+                "defaultValue": "Ergast"
+            }
+        },
+        "folder": {
+            "name": "Formula1"
+        },
+        "annotations": [],
+        "lastPublishTime": "2026-02-26T11:35:59Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

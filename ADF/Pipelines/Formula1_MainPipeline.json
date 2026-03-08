@@ -1,0 +1,70 @@
+{
+    "name": "Formula1_MainPipeline",
+    "properties": {
+        "activities": [
+            {
+                "name": "ExecuteSilver",
+                "type": "ExecutePipeline",
+                "dependsOn": [],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Formula1_SilverPipeline",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "p_file_date": {
+                            "value": "@pipeline().parameters.p_file_date",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "ExecuteGold",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "ExecuteSilver",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Formula1_GoldPipeline",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "p_file_date": {
+                            "value": "@pipeline().parameters.p_file_date",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            }
+        ],
+        "concurrency": 1,
+        "parameters": {
+            "p_file_date": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "Formula1"
+        },
+        "annotations": [],
+        "lastPublishTime": "2026-02-26T11:36:00Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

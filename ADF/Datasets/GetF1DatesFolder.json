@@ -1,0 +1,27 @@
+{
+    "name": "GetF1DatesFolder",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureDataLakeStorage",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "p_file_date": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "Binary",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "folderPath": {
+                    "value": "@concat('bronze/Raw/',formatDateTime(dataset().p_file_date,'yyyy-MM-dd'))",
+                    "type": "Expression"
+                },
+                "fileSystem": "formula1"
+            }
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}
